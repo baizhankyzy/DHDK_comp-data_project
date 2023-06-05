@@ -1,0 +1,113 @@
+from DM_classes import *
+from RelDBProcessor import *
+
+class GenericQueryProcessor():
+    def __init__(self):
+        self.queryProcessors = list()
+
+    def cleanQueryProcessors(self):
+        for i in queryProcessor:
+            if i in QueryProcessor:
+                queryProcessor.remove(i)
+        queryProcessors = []
+
+#create a list out of all annotations
+   
+        
+    def addQueryProcessor(self, processor):
+        self.queryProcessors.append(processor)
+        
+    def getAllAnnotations(self) -> list[Annotation]:
+        """
+        #Retrieves a list of Annotation objects from the accessible databases via the query processors.
+
+        #Returns:
+            list: A list of Annotation objects.
+        """
+        # Call the related method on all the QueryProcessor objects included in queryProcessors
+        # before combining the results and returning the requested object(s)
+        annotations = []
+        for processor in self.queryProcessors:
+            # Assuming the QueryProcessor has a method called 'getAnnotations'
+            if isinstance(processor, RelationalQueryProcessor): #checking if processor is in the list
+                df_result = processor.getAllAnnotations() #assign values from query to variable
+               #res_list = [Annotation(id, body, target, motivation) for id, target, motivation, target in df_result.iterrows(
+                result = list()
+                for idx, row in df_result.iterrows():
+                    result.append(Annotation(row["id"], row["body"], row["target"], row["motivation"]))
+                return result
+        
+    def getAnnotationsToCollection(self, collectionId): #easy
+        # it returns a list of objects having class Annotation, included in the databases accessible via the query processors, 
+        #that have, as annotation target, the collection specified by the input identifier.  
+        for processor in self.queryProcessors:
+            if isinstance(processor, RelationalQueryProcessor):
+                df_result = processor.getAnnotationsWithTarget(collectionId)
+                result = list()
+                for idx, row in df_result.iterrows():
+                    result.append(Annotation(row["id"], row["body"], row["target"], row["motivation"]))
+                return result                
+            
+    
+    #it returns a list of objects having class Annotation, included in the databases accessible via the query processors, 
+    #that have, as annotation body, the entity specified by the input identifier.    
+    def getAnnotationsWithBody(self, bodyId):#easy
+        for processor in self.queryProcessors:
+            if isinstance(processor, RelationalQueryProcessor):
+                df_result = processor.getAnnotationsWithBody(bodyId)
+                result = list()
+                for idx, row in df_result.iterrows():
+                    result.append(Annotation(row["id"], row["body"], row["target"], row["motivation"]))
+                return result 
+   
+   
+    # it returns a list of objects having class Annotation, included in the databases accessible via the query processors, 
+    #that have, as annotation target, the entity specified by the input identifier.        
+    def getAnnotationsWithTarget(self, targetId):#easy
+        for processor in self.queryProcessors:
+            if isinstance(processor, RelationalQueryProcessor):
+                df_result = processor.getAnnotationsWithTarget(targetId)
+                result = list()
+                for idx, row in df_result.iterrows():
+                    result.append(Annotation(row["id"], row["body"], row["target"], row["motivation"]))
+                return result    
+            
+               
+        
+
+
+    def getAllCollections(self) -> list[Collection]: #items
+        collections = []
+        for processor in self.queryProcessors:
+            processor_collections = processor.getAllCollections()
+            annotations.extend(processor_collections)
+        return collections
+    
+    def getAllManifests(self) -> list[Manifest]: 
+        manifests = []
+        for processor in self.queryProcessors:
+            processor_manifests = processor.getAllCollections()
+            annotations.extend(processor_manifests)
+        return collections
+    
+   
+    
+    
+    
+  
+    def getCanvasesInManifest(self, manifestId) -> list[Collection]: #merge
+        pass
+    
+    #it returns none, but I am working on it
+    def getEntitiesWithCreator(self, creatorName) -> list[EntityWithMetadata]:
+        for processor in self.queryProcessors:
+            if isinstance(processor, RelationalQueryProcessor):
+                df_result = processor.getEntitiesWithCreator(creatorName)
+                for idx, row in df_result.iterrows():
+                    result.append(EntityWithMetadata(row["id"], row["title"], row["creators"]))
+                return result          
+        pass
+    
+  
+    
+    
